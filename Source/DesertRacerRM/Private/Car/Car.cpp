@@ -38,7 +38,6 @@ void ACar::BeginPlay()
 		if (Subsystem)
 		{
 			Subsystem->AddMappingContext(InputMappingContext, 0);
-			UE_LOG(LogTemp, Warning, TEXT("Subsystem exist!"));
 		}
 	}
 }
@@ -51,14 +50,19 @@ void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	if (EnhancedInputComponent)
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACar::Move);
-		UE_LOG(LogTemp, Warning, TEXT("EnhancedInputComponent is Binding...!"));
 	}
 }
 
 void ACar::Move(const FInputActionValue& Value)
 {
 	FVector2D MoveActionValue = Value.Get<FVector2D>();
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *MoveActionValue.ToString());
 	GEngine->AddOnScreenDebugMessage(1, 10.0f, FColor::White, MoveActionValue.ToString());
+	
+	if (abs(MoveActionValue.Y) > 0)
+	{
+		FVector CurrentLocation = GetActorLocation();
+		FVector NewLocation(CurrentLocation.X, 0.f, CurrentLocation.Z + MoveActionValue.Y * Speed * GetWorld()->DeltaTimeSeconds);
+		SetActorLocation(NewLocation);
+	}
 }
 

@@ -55,4 +55,7 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess=true))
 	UInputAction* MoveAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
+	float Speed = 1000.0f;
 };

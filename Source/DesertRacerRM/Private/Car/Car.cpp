@@ -60,8 +60,27 @@ void ACar::Move(const FInputActionValue& Value)
 	
 	if (abs(MoveActionValue.Y) > 0)
 	{
+		if (abs(MoveActionValue.X) > 0)
+		{
+			float RotationAmount = -RotationSpeed * MoveActionValue.X * GetWorld()->DeltaTimeSeconds;
+			if ((MoveActionValue.X < 0 && MoveActionValue.Y < 0) || 
+				(MoveActionValue.X > 0 && MoveActionValue.Y < 0))
+			{
+				RotationAmount = -RotationAmount;
+			}
+			FRotator NewRotator(RotationAmount , 0.f, 0.f);
+			AddActorWorldRotation(NewRotator);
+		}
+		
+		/* GetActorUpVector(): lấy hướng (direction) Z "cục bộ (local)" để sử dụng trong "space world" (world). 
+		 *					   Nên sử dụng cả function k nên tách thành GetActorUpVector().Z,... bởi vì 
+		 *					   nó còn phải phụ thuộc vào 2 trục còn lại và độ xoay (rotation) của các trục đó trong "world" 
+		 *					   được thiết lập sẵn trong function đó 
+		 */
+		
 		FVector CurrentLocation = GetActorLocation();
-		FVector NewLocation(CurrentLocation.X, 0.f, CurrentLocation.Z + MoveActionValue.Y * Speed * GetWorld()->DeltaTimeSeconds);
+		FVector DistanceToMove = GetActorUpVector() * Speed * MoveActionValue.Y * GetWorld()->DeltaTimeSeconds;
+		FVector NewLocation = CurrentLocation + DistanceToMove;
 		SetActorLocation(NewLocation);
 	}
 }

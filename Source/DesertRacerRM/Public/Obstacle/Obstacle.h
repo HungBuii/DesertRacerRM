@@ -33,4 +33,8 @@ private:
 	/** Sprite */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
 	UPaperSpriteComponent* ObstacleSprite;
+	
+	/** Finish Line? */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Is Finish Line?", meta=(AllowPrivateAccess=true))
+	bool bFinishLine = false;
 };

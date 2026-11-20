@@ -6,6 +6,8 @@
 #include "PaperSpriteComponent.h"
 #include "Car/Car.h"
 #include "Components/CapsuleComponent.h"
+#include "Game/DesertRacerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 AObstacle::AObstacle()
 {
@@ -34,6 +36,12 @@ void AObstacle::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* O
 	if (ACar* Car = Cast<ACar>(OtherActor))
 	{
 		Car->SetCanMove(false);
+		
+		if (ADesertRacerGameMode* DesertRacerGameMode = Cast<ADesertRacerGameMode>
+												(UGameplayStatics::GetGameMode(GetWorld())))
+		{
+			DesertRacerGameMode->ResetLevel(bFinishLine);
+		}
 	}
 }
 

@@ -37,4 +37,8 @@ private:
 	/** Finish Line? */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Is Finish Line?", meta=(AllowPrivateAccess=true))
 	bool bFinishLine = false;
+	
+	/** Sound when other collision */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Sound", meta=(AllowPrivateAccess=true))
+	USoundBase* HitSound;
 };

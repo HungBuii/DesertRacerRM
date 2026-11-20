@@ -25,9 +25,7 @@ void AObstacle::BeginPlay()
 	Super::BeginPlay();
 	
 	CapsuleComp->OnComponentBeginOverlap.AddDynamic(this, &AObstacle::OverlapBegin);
-	// UPrimitiveComponent, OnComponentBeginOverlap, UPrimitiveComponent*, OverlappedComponent, 
-	// AActor*, OtherActor, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex, bool, bFromSweep, 
-	// const FHitResult &, SweepResult
+	
 }
 
 void AObstacle::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -36,6 +34,7 @@ void AObstacle::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* O
 	if (ACar* Car = Cast<ACar>(OtherActor))
 	{
 		Car->SetCanMove(false);
+		UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
 		
 		if (ADesertRacerGameMode* DesertRacerGameMode = Cast<ADesertRacerGameMode>
 												(UGameplayStatics::GetGameMode(GetWorld())))

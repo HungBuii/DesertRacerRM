@@ -60,14 +60,23 @@ void ACar::Move(const FInputActionValue& Value)
 	
 	if (abs(MoveActionValue.Y) > 0)
 	{
+		float FinalSpeed = Speed;
+		
+		if (MoveActionValue.Y < 0)
+		{
+			FinalSpeed = Speed / 2;
+		}
+		
 		if (abs(MoveActionValue.X) > 0)
 		{
 			float RotationAmount = -RotationSpeed * MoveActionValue.X * GetWorld()->DeltaTimeSeconds;
+			
 			if ((MoveActionValue.X < 0 && MoveActionValue.Y < 0) || 
 				(MoveActionValue.X > 0 && MoveActionValue.Y < 0))
 			{
 				RotationAmount = -RotationAmount;
 			}
+			
 			FRotator NewRotator(RotationAmount , 0.f, 0.f);
 			AddActorWorldRotation(NewRotator);
 		}
@@ -79,9 +88,11 @@ void ACar::Move(const FInputActionValue& Value)
 		 */
 		
 		FVector CurrentLocation = GetActorLocation();
-		FVector DistanceToMove = GetActorUpVector() * Speed * MoveActionValue.Y * GetWorld()->DeltaTimeSeconds;
+		FVector DistanceToMove = GetActorUpVector() * FinalSpeed * MoveActionValue.Y * GetWorld()->DeltaTimeSeconds;
 		FVector NewLocation = CurrentLocation + DistanceToMove;
 		SetActorLocation(NewLocation);
+		
+		UE_LOG(LogTemp, Warning, TEXT("Final Speed: %f"), FinalSpeed);
 	}
 }
 

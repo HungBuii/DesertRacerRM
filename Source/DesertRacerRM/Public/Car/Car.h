@@ -32,6 +32,10 @@ protected:
 	
 	/** Move */
 	void Move(const FInputActionValue& Value);
+	
+public:
+	/** Can Move */
+	void SetCanMove(bool _bCanMove);
 
 private:
 	/** Collision */
@@ -61,4 +65,8 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
 	float RotationSpeed = 100.0f;
+	
+	/** Can Move */
+	UPROPERTY(VisibleAnywhere, meta=(AllowPrivateAccess=true))
+	bool bCanMove = true;
 };

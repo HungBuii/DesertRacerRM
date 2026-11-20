@@ -40,6 +40,8 @@ void ACar::BeginPlay()
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
+	
+	bCanMove = true;
 }
 
 void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -58,41 +60,48 @@ void ACar::Move(const FInputActionValue& Value)
 	FVector2D MoveActionValue = Value.Get<FVector2D>();
 	GEngine->AddOnScreenDebugMessage(1, 10.0f, FColor::White, MoveActionValue.ToString());
 	
-	if (abs(MoveActionValue.Y) > 0)
+	if (bCanMove)
 	{
-		float FinalSpeed = Speed;
-		
-		if (MoveActionValue.Y < 0)
+		if (abs(MoveActionValue.Y) > 0)
 		{
-			FinalSpeed = Speed / 2;
-		}
+			float FinalSpeed = Speed;
 		
-		if (abs(MoveActionValue.X) > 0)
-		{
-			float RotationAmount = -RotationSpeed * MoveActionValue.X * GetWorld()->DeltaTimeSeconds;
-			
-			if ((MoveActionValue.X < 0 && MoveActionValue.Y < 0) || 
-				(MoveActionValue.X > 0 && MoveActionValue.Y < 0))
+			if (MoveActionValue.Y < 0)
 			{
-				RotationAmount = -RotationAmount;
+				FinalSpeed = Speed / 2;
 			}
+		
+			if (abs(MoveActionValue.X) > 0)
+			{
+				float RotationAmount = -RotationSpeed * MoveActionValue.X * GetWorld()->DeltaTimeSeconds;
 			
-			FRotator NewRotator(RotationAmount , 0.f, 0.f);
-			AddActorWorldRotation(NewRotator);
+				if ((MoveActionValue.X < 0 && MoveActionValue.Y < 0) || 
+					(MoveActionValue.X > 0 && MoveActionValue.Y < 0))
+				{
+					RotationAmount = -RotationAmount;
+				}
+			
+				FRotator NewRotator(RotationAmount , 0.f, 0.f);
+				AddActorWorldRotation(NewRotator);
+			}
+		
+			/* GetActorUpVector(): lấy hướng (direction) Z "cục bộ (local)" để sử dụng trong "space world" (world). 
+			 *					   Nên sử dụng cả function k nên tách thành GetActorUpVector().Z,... bởi vì 
+			 *					   nó còn phải phụ thuộc vào 2 trục còn lại và độ xoay (rotation) của các trục đó trong "world" 
+			 *					   được thiết lập sẵn trong function đó 
+			 */
+		
+			FVector CurrentLocation = GetActorLocation();
+			FVector DistanceToMove = GetActorUpVector() * FinalSpeed * MoveActionValue.Y * GetWorld()->DeltaTimeSeconds;
+			FVector NewLocation = CurrentLocation + DistanceToMove;
+			SetActorLocation(NewLocation);
 		}
-		
-		/* GetActorUpVector(): lấy hướng (direction) Z "cục bộ (local)" để sử dụng trong "space world" (world). 
-		 *					   Nên sử dụng cả function k nên tách thành GetActorUpVector().Z,... bởi vì 
-		 *					   nó còn phải phụ thuộc vào 2 trục còn lại và độ xoay (rotation) của các trục đó trong "world" 
-		 *					   được thiết lập sẵn trong function đó 
-		 */
-		
-		FVector CurrentLocation = GetActorLocation();
-		FVector DistanceToMove = GetActorUpVector() * FinalSpeed * MoveActionValue.Y * GetWorld()->DeltaTimeSeconds;
-		FVector NewLocation = CurrentLocation + DistanceToMove;
-		SetActorLocation(NewLocation);
-		
-		UE_LOG(LogTemp, Warning, TEXT("Final Speed: %f"), FinalSpeed);
 	}
+	
+}
+
+void ACar::SetCanMove(bool _bCanMove)
+{
+	bCanMove = _bCanMove;
 }
 
